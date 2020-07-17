@@ -14,6 +14,10 @@ rankhospital <- function(state, outcome, num) {
   db$HF <- as.numeric(db$HF)
   db$PN <- as.numeric(db$PN)
   
+  #test code
+  #x <- filter(db, State == "TX")
+  #x <- x %>% arrange(HF, Hospital.Name)
+  
   ## Check that state and outcome are valid
   check <- state == db$State
   if(sum(check > 0)) {print("valid state")}
@@ -28,11 +32,21 @@ rankhospital <- function(state, outcome, num) {
   
   x <- filter(db, State == state)
   
-  if(outcome == "MI"){x <- arrange(x, x$MI, x$Hospital.Name)}
-  else if(outcome == "HF"){x <- arrange(x, x$HF, x$Hospital.Name)}
-  else if(outcome == "PN"){x <- arrange(x, x$PN, x$Hospital.Name)}
+  if(outcome == "MI"){
+    x <- arrange(x, x$MI, x$Hospital.Name)
+    y <- x[complete.cases(x[,3]),]
+    }
+  else if(outcome == "HF"){
+    x <- arrange(x, x$HF, x$Hospital.Name)
+    y <- x[complete.cases(x[,4]),]
+    }
+  else if(outcome == "PN"){
+    x <- arrange(x, x$PN, x$Hospital.Name)
+    y <- x[complete.cases(x[,5]),]
+  }
+  
   else{stop(print("invalid condition"))}
   
-  paste(x[num,1], "Rank:", num, sep = " ")
+  paste(y[num,1], "Mortality rate for", outcome, ":", x[num,outcome], "Rank:", num, sep = " ")
   
 }
