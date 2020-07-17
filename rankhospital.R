@@ -15,8 +15,8 @@ rankhospital <- function(state, outcome, num) {
   db$PN <- as.numeric(db$PN)
   
   #test code
-  #x <- filter(db, State == "TX")
-  #x <- x %>% arrange(HF, Hospital.Name)
+  x <- filter(db, State == "TX")
+  x <- x %>% arrange(HF, Hospital.Name)
   
   ## Check that state and outcome are valid
   check <- state == db$State
@@ -32,21 +32,42 @@ rankhospital <- function(state, outcome, num) {
   
   x <- filter(db, State == state)
   
-  if(outcome == "MI"){
-    x <- arrange(x, x$MI, x$Hospital.Name)
-    y <- x[complete.cases(x[,3]),]
-    }
-  else if(outcome == "HF"){
-    x <- arrange(x, x$HF, x$Hospital.Name)
-    y <- x[complete.cases(x[,4]),]
-    }
-  else if(outcome == "PN"){
-    x <- arrange(x, x$PN, x$Hospital.Name)
-    y <- x[complete.cases(x[,5]),]
+  if(num != "worst"){
+  
+        if(outcome == "MI"){
+                x <- arrange(x, x$MI, x$Hospital.Name)
+                y <- x[complete.cases(x[,3]),]
+                }
+        else if(outcome == "HF"){
+                x <- arrange(x, x$HF, x$Hospital.Name)
+                y <- x[complete.cases(x[,4]),]
+                }
+        else if(outcome == "PN"){
+                x <- arrange(x, x$PN, x$Hospital.Name)
+                y <- x[complete.cases(x[,5]),]
+              }
+  
+        else{stop(print("invalid condition"))}
   }
   
-  else{stop(print("invalid condition"))}
+  if(num == "worst"){
+      if(outcome == "MI"){
+        x <- arrange(x, desc(x$MI), x$Hospital.Name)
+        y <- x[complete.cases(x[,3]),]
+      }
+      else if(outcome == "HF"){
+        x <- arrange(x, desc(x$HF), x$Hospital.Name)
+        y <- x[complete.cases(x[,4]),]
+      }
+      else if(outcome == "PN"){
+        x <- arrange(x, desc(x$PN), x$Hospital.Name)
+        y <- x[complete.cases(x[,5]),]
+      }
+      
+      else{stop(print("invalid condition"))}
+  num <- 1
+    }
   
-  paste(y[num,1], "Mortality rate for", outcome, ":", x[num,outcome], "Rank:", num, sep = " ")
+  paste(y[num,1], "Mortality rate for", outcome, ":",y[num,outcome], "Rank:", num, sep = " ")
   
 }
